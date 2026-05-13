@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container contact-page-container">
+    <h1 class="section-title">Наші контакти</h1>
+    
+    <div class="contacts-layout">
+        <!-- Блок з текстом у рамці -->
+        <div class="contact-info-card">
+            <h3>МАГАЗИН LUMINAIL</h3>
+            <div class="contact-item">
+                <span class="icon">📍</span>
+                <span class="text">м. Луцьк, проспект Соборності, 11</span>
+            </div>
+            <div class="contact-item">
+                <span class="icon">📞</span>
+                <span class="text">+38 050 000 00 00</span>
+            </div>
+            <div class="contact-item">
+                <span class="icon">🕒</span>
+                <span class="text">Пн-Нд: 09:00 - 19:00</span>
+            </div>
+        </div>
+        
+        <!-- Блок з картою -->
+        <div class="map-container">
+            <iframe 
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2524.3418!2d25.3486358!3d50.7508008!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x472599ec5178619d%3A0x64369528659d877a!2z0L_RgNC-0YHQvy4g0KHQvtCx0L7RgNC90L7RgdGC0ZYsIDExLCDQm9GD0YbRjNC6LCDQktC-0LvQuNC90YHRjNC60LAg0L7QsdC70LDRgdGC0YwsIDQzMDAw!5e0!3m2!1suk!2sua!4v1715643000000!5m2!1suk!2sua" 
+                width="100%" 
+                height="100%" 
+                allowfullscreen="" 
+                loading="lazy" 
+                referrerpolicy="no-referrer-when-downgrade">
+            </iframe>
+        </div>
+    </div>
+</div>
+{% endblock %}

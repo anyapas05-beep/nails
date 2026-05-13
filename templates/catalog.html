@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container catalog-layout">
+    <!-- Блок фільтрів -->
+    <aside class="filter-sidebar">
+        <form method="GET" action="{% url 'catalog' %}">
+            <!-- Зберігаємо обрану категорію при фільтрації брендів -->
+            {% if request.GET.category %}
+                <input type="hidden" name="category" value="{{ request.GET.category }}">
+            {% endif %}
+
+            <h3>Бренди</h3>
+            <div class="filter-group">
+                {% for brand in brands %}
+                <label class="checkbox-item">
+                    <input type="checkbox" name="brand" value="{{ brand.id }}"
+                           {% if brand.id in selected_brands_ids %}checked{% endif %}>
+                    {{ brand.name }}
+                </label><br>
+                {% endfor %}
+            </div>
+
+            <button type="submit" class="btn-pastel btn-full">Застосувати</button>
+            <a href="{% url 'catalog' %}" class="btn-reset">Скинути все</a>
+        </form>
+    </aside>
+
+    <section>
+        <!-- Кнопки категорій (теги) -->
+        <div class="category-tags">
+            <a href="{% url 'catalog' %}" class="tag {% if not request.GET.category %}active{% endif %}">Всі</a>
+            {% for cat in categories %}
+            <a href="?category={{ cat.id }}{% for b in selected_brands_ids %}&brand={{ b }}{% endfor %}"
+               class="tag {% if request.GET.category == cat.id|stringformat:'s' %}active{% endif %}">
+                {{ cat.name }}
+            </a>
+            {% endfor %}
+        </div>
+
+        <!-- Сітка товарів -->
+        <div class="product-grid">
+            {% for product in products %}
+            <div class="product-card">
+                <!-- Місце під фото -->
+                <div class="product-img-box">
+                    {% if product.image %}
+                        <img src="{{ product.image.url }}" alt="{{ product.name }}" class="product-img">
+                    {% else %}
+                        <span class="placeholder-text">LumiNail</span>
+                    {% endif %}
+                </div>
+
+                <h4 class="product-title">{{ product.name }}</h4>
+                <p class="price">{{ product.price }} грн</p>
+                <button class="btn-pastel btn-full">У кошик</button>
+            </div>
+            {% empty %}
+            <p class="empty-msg">Товарів за вашим запитом не знайдено.</p>
+            {% endfor %}
+        </div>
+    </section>
+</div>
+{% endblock %}

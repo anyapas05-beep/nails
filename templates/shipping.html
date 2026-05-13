@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container shipping-page">
+    <h1 class="shipping-title">Доставка і оплата</h1>
+
+    <!-- Вступний текст про оплату -->
+    <div class="payment-intro">
+        <p>Ми дбаємо про вашу зручність, тому пропонуємо кілька варіантів оплати. Ви можете оплатити замовлення онлайн під час оформлення або обрати післяплату при отриманні у відділенні пошти.</p>
+        <p>Зверніть увагу, що для деяких категорій товарів може знадобитися часткова або повна передоплата.</p>
+    </div>
+
+    <h2 class="section-subtitle">СПОСОБИ ДОСТАВКИ</h2>
+    
+    <!-- Картки з фотографіями -->
+    <div class="shipping-grid-two">
+        <!-- Картка Нової Пошти -->
+        <div class="shipping-card-photo">
+            <img src="{% static 'images/nova-poshta-bg.jpg' %}" alt="Нова Пошта" class="card-bg-img">
+            <div class="card-overlay">
+                <h4>НОВА ПОШТА</h4>
+                <button class="btn-pastel-outline" onclick="showDetails('nova')">Докладніше</button>
+            </div>
+        </div>
+
+        <!-- Картка Укрпошти -->
+        <div class="shipping-card-photo">
+            <img src="{% static 'images/ukr-poshta-bg.jpg' %}" alt="Укрпошта" class="card-bg-img">
+            <div class="card-overlay">
+                <h4>УКРПОШТА</h4>
+                <button class="btn-pastel-outline" onclick="showDetails('ukr')">Докладніше</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Блок з деталями (прихований) -->
+    <div id="delivery-info" class="delivery-details-box">
+        <div id="nova-info" class="info-content">
+            <h3>Умови доставки Новою Поштою</h3>
+            <p>Ми відправляємо замовлення Новою Поштою щодня до 16:00.</p>
+            <ul>
+                <li>Оплата при отриманні або передоплата на карту.</li>
+                <li>Безкоштовна доставка при замовленні від 2000 грн.</li>
+            </ul>
+        </div>
+
+        <div id="ukr-info" class="info-content">
+            <h3>Умови доставки Укрпоштою</h3>
+            <p>Відправка протягом 2-х робочих днів.</p>
+            <ul>
+                <li>Термін доставки по Україні: 3-5 днів.</li>
+                <li>Тільки за умови повної передоплати.</li>
+            </ul>
+        </div>
+        <button class="btn-pastel" onclick="hideDetails()">Закрити</button>
+    </div>
+</div>
+
+<script src="{% static 'js/scripts.js' %}"></script>
+{% endblock %}
