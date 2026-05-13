@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container product-page-container">
+    <div class="product-detail-layout">
+        
+        <!-- Блок із фотографією (тепер зі зменшеним розміром) -->
+        <div class="product-main-img">
+            {% if product.image %}
+                <img src="{{ product.image.url }}" alt="{{ product.name }}" class="detail-img">
+            {% else %}
+                <div class="product-img-box">
+                    <span class="placeholder-text">LumiNail</span>
+                </div>
+            {% endif %}
+        </div>
+        
+        <!-- Блок із інформацією -->
+        <div class="product-info">
+            <h1>{{ product.name }}</h1>
+            <p class="brand">Бренд: {{ product.brand.name }}</p>
+            <p class="price">{{ product.price }} грн</p>
+            
+            <!-- Опис тепер над кнопкою -->
+            <div class="description">
+                <h3>Опис товару</h3>
+                <p>{{ product.description }}</p>
+            </div>
+            
+            <!-- Кнопки дій -->
+            <div class="actions">
+                <button class="btn-pastel btn-buy">Купити</button>
+                <a href="{% url 'catalog' %}" class="btn-pastel-outline btn-back">Повернутись до каталогу</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

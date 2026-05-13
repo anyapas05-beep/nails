@@ -1,5 +1,6 @@
-from django.shortcuts import render
-from .models import Category, Product, Brand
+# Додайте get_object_or_404 через кому після render
+from django.shortcuts import render, get_object_or_404
+from .models import Product, Category, Brand
 
 
 def catalog_view(request):
@@ -28,6 +29,24 @@ def catalog_view(request):
     }
     return render(request, 'catalog.html', context)
 
+
+def category_detail(request, slug):
+    # Відображаємо товари лише відповідної категорії
+    category = get_object_or_404(Category, slug=slug)
+    products = Product.objects.filter(category=category)
+    brands = Brand.objects.all()
+
+    return render(request, 'category.html', {
+        'category': category,
+        'products': products,
+        'brands': brands
+    })
+
+
+def product_detail(request, pk):
+    # Отримуємо конкретний товар за його ID (pk)
+    product = get_object_or_404(Product, pk=pk)
+    return render(request, 'product_detail.html', {'product': product})
 
 def about_view(request):
     return render(request, 'about.html')

@@ -1,10 +1,11 @@
 {% extends 'base.html' %}
+{% load static %}
+
 {% block content %}
 <div class="container catalog-layout">
-    <!-- Блок фільтрів -->
+    <!-- Бічна панель з фільтрами -->
     <aside class="filter-sidebar">
         <form method="GET" action="{% url 'catalog' %}">
-            <!-- Зберігаємо обрану категорію при фільтрації брендів -->
             {% if request.GET.category %}
                 <input type="hidden" name="category" value="{{ request.GET.category }}">
             {% endif %}
@@ -16,7 +17,7 @@
                     <input type="checkbox" name="brand" value="{{ brand.id }}"
                            {% if brand.id in selected_brands_ids %}checked{% endif %}>
                     {{ brand.name }}
-                </label><br>
+                </label>
                 {% endfor %}
             </div>
 
@@ -25,8 +26,9 @@
         </form>
     </aside>
 
+    <!-- Основна частина з товарами -->
     <section>
-        <!-- Кнопки категорій (теги) -->
+        <!-- Категорії (Теги) -->
         <div class="category-tags">
             <a href="{% url 'catalog' %}" class="tag {% if not request.GET.category %}active{% endif %}">Всі</a>
             {% for cat in categories %}
@@ -41,7 +43,10 @@
         <div class="product-grid">
             {% for product in products %}
             <div class="product-card">
-                <!-- Місце під фото -->
+                <!-- Клікабельна область для переходу на товар -->
+                <!-- Правильний запис у вашому циклі for product in products -->
+                <a href="{% url 'product_detail' product.pk %}" class="card-link-overlay"></a>
+
                 <div class="product-img-box">
                     {% if product.image %}
                         <img src="{{ product.image.url }}" alt="{{ product.name }}" class="product-img">
@@ -52,10 +57,14 @@
 
                 <h4 class="product-title">{{ product.name }}</h4>
                 <p class="price">{{ product.price }} грн</p>
-                <button class="btn-pastel btn-full">У кошик</button>
+
+                <!-- Кнопка винесена в окремий шар, щоб клік по ній не перебивався посиланням -->
+                <div class="card-actions">
+                    <button class="btn-pastel btn-full cart-btn">У кошик</button>
+                </div>
             </div>
             {% empty %}
-            <p class="empty-msg">Товарів за вашим запитом не знайдено.</p>
+            <p class="empty-msg">Товарів не знайдено.</p>
             {% endfor %}
         </div>
     </section>
