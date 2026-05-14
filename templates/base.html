@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="uk">
 <head>
@@ -15,19 +16,47 @@
                     <li><a href="/about/">Про нас</a></li>
                     <li><a href="/shipping/">Доставка</a></li>
                     <li><a href="/contacts/">Контакти</a></li>
+                    <!-- Додано посилання на кошик -->
+                    <li>
+                        <a href="{% url 'cart_detail' %}" class="cart-nav-link">
+                            🛒 Кошик (<span id="cart-count">{{ request.session.cart|length|default:0 }}</span>)
+                        </a>
+                    </li>
                 </ul>
             </nav>
         </div>
     </header>
 
     <main>
+        {% if messages %}
+            <div class="container mt-3">
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
         {% block content %}{% endblock %}
     </main>
 
-    <footer>
+    <footer class="footer">
         <div class="container">
-            <p>© 2026 LumiNail. м. Луцьк. Всі права захищені.</p>
+            <div class="footer-content" style="display: flex; justify-content: space-between; align-items: center;">
+                <div class="footer-info">
+                    <p>&copy; 2026 LumiNail. м. Луцьк. Всі права захищені.</p>
+                </div>
+
+                <div class="newsletter-box">
+                    <h4>Підпишіться на новини</h4>
+                    <form action="{% url 'subscribe' %}" method="POST" style="display: flex; gap: 10px;">
+                        {% csrf_token %}
+                        <input type="email" name="email" placeholder="Ваш email" required class="newsletter-input">
+                        <button type="submit" class="btn-pastel">ОК</button>
+                    </form>
+                </div>
+            </div>
         </div>
     </footer>
+<script src="{% static 'js/main.js' %}?v=1.1"></script>
 </body>
 </html>

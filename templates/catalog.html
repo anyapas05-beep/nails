@@ -44,7 +44,6 @@
             {% for product in products %}
             <div class="product-card">
                 <!-- Клікабельна область для переходу на товар -->
-                <!-- Правильний запис у вашому циклі for product in products -->
                 <a href="{% url 'product_detail' product.pk %}" class="card-link-overlay"></a>
 
                 <div class="product-img-box">
@@ -58,9 +57,9 @@
                 <h4 class="product-title">{{ product.name }}</h4>
                 <p class="price">{{ product.price }} грн</p>
 
-                <!-- Кнопка винесена в окремий шар, щоб клік по ній не перебивався посиланням -->
-                <div class="card-actions">
-                    <button class="btn-pastel btn-full cart-btn">У кошик</button>
+                <!-- Кнопка "У кошик" з класом btn-buy для роботи вашого main.js -->
+                <div class="card-actions" style="position: relative; z-index: 2;">
+                    <a href="{% url 'cart_add' product.id %}" class="btn-pastel btn-full btn-buy">У кошик</a>
                 </div>
             </div>
             {% empty %}

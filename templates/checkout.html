@@ -1,0 +1,203 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="checkout-container">
+    <h1 class="checkout-main-title">Оформлення замовлення</h1>
+
+    <div class="checkout-tabs">
+        <div class="tab active" onclick="switchTab('new')">Новий покупець</div>
+        <div class="tab" onclick="switchTab('regular')">Я постійний клієнт</div>
+    </div>
+
+    <!-- Обгортаємо все в форму для валідації та відправки даних -->
+    <form id="checkout-form" method="POST" action="{% url 'checkout_complete' %}">
+        {% csrf_token %}
+        <div class="checkout-layout">
+            <div class="checkout-form-section">
+
+                <!-- Крок 1: Особисті дані -->
+                <div id="step-1" class="checkout-step active">
+                    <div class="step-header">
+                        <span class="step-num active">1</span>
+                        <h2 class="active">Особисті дані</h2>
+                    </div>
+
+                    <div class="input-grid">
+                        <div class="input-group">
+                            <label>Ваше ім'я*</label>
+                            <input type="text" name="first_name" placeholder="Ім'я" required
+                                   oninput="this.value = this.value.replace(/[^a-zA-Zа-яА-ЯіІїЇєЄґҐ']/g, '')">
+                        </div>
+                        <div class="input-group">
+                            <label>Ваше прізвище*</label>
+                            <input type="text" name="last_name" placeholder="Прізвище" required
+                                   oninput="this.value = this.value.replace(/[^a-zA-Zа-яА-ЯіІїЇєЄґҐ']/g, '')">
+                        </div>
+                        <div class="input-group">
+                            <label>Телефон*</label>
+                            <input type="tel" name="phone" placeholder="+380" required
+                                   oninput="this.value = this.value.replace(/[^0-9+]/g, '')">
+                        </div>
+                        <div class="input-group">
+                            <label>E-mail*</label>
+                            <input type="email" name="email" placeholder="example@mail.com" required>
+                        </div>
+                    </div>
+                    <button type="button" class="btn-pastel btn-next" onclick="goToStep(2)" style="margin-top: 20px; border: none; cursor: pointer;">Далі</button>
+                </div>
+
+                <!-- Крок 2: Доставка та Оплата -->
+                <div id="step-2" class="checkout-step" style="display: none;">
+                    <div class="step-header">
+                        <span class="step-num">2</span>
+                        <h2>Інформація про доставку та оплату</h2>
+                    </div>
+
+                    <div class="input-grid">
+                        <div class="input-group full">
+                            <label>Місто*</label>
+                            <input type="text" name="city" value="Луцьк, Волинська обл." required>
+                        </div>
+
+                        <div class="input-group">
+                            <label>Варіант доставки</label>
+                            <select id="delivery-select" name="delivery_method" onchange="toggleDeliveryFields()">
+                                <option value="nova">Нова Пошта (69 грн)</option>
+                                <option value="ukr">Укрпошта (49 грн)</option>
+                                <option value="self">Самовивіз (Безкоштовно)</option>
+                            </select>
+                        </div>
+
+                        <div class="input-group">
+                            <label>Варіант оплати</label>
+                            <select disabled style="background-color: #f9f9f9; cursor: not-allowed;">
+                                <option value="cod">Накладений платіж</option>
+                            </select>
+                            <small style="color: #999; font-size: 11px;">*Оплата при отриманні у відділенні</small>
+                        </div>
+
+                        <!-- Поля для Нової Пошти -->
+                        <div id="nova-poshta-fields" class="input-group full delivery-subfields">
+                            <label>Номер відділення*</label>
+                            <input type="text" name="np_office" placeholder="Наприклад: Відділення №1">
+                        </div>
+
+                        <!-- Поля для Укрпошти -->
+                        <div id="ukr-poshta-fields" class="input-group full delivery-subfields" style="display: none;">
+                            <div class="input-grid" style="grid-template-columns: 2fr 1fr 1fr; gap: 10px;">
+                                <div class="input-group">
+                                    <label>Вулиця*</label>
+                                    <input type="text" name="ukr_street" placeholder="Вулиця">
+                                </div>
+                                <div class="input-group">
+                                    <label>Буд.*</label>
+                                    <input type="text" name="ukr_house" placeholder="№">
+                                </div>
+                                <div class="input-group">
+                                    <label>Кв.</label>
+                                    <input type="text" name="ukr_flat" placeholder="№ (кв.)">
+                                </div>
+                            </div>
+                            <div class="input-group" style="margin-top: 15px;">
+                                <label>Поштовий індекс*</label>
+                                <input type="text" name="ukr_zip" placeholder="00000">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="checkout-actions" style="margin-top: 30px; display: flex; align-items: center; justify-content: space-between;">
+                        <span class="back-link" onclick="goToStep(1)" style="cursor: pointer; color: #880e4f; text-decoration: underline;">← Назад</span>
+
+                        <!-- Кнопка submit замість посилання <a> -->
+                        <button type="submit" class="btn-pastel btn-fixed"
+                                style="background-color: #880e4f; color: white; padding: 10px 30px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold;">
+                            ОФОРМИТИ ЗАМОВЛЕННЯ
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Права частина: Ваше замовлення -->
+            <aside class="order-summary-aside">
+                <h3>Ваше замовлення</h3>
+                <div class="summary-items">
+                    {% for item in cart_items %}
+                    <div class="summary-item" style="display: flex; gap: 10px; margin-bottom: 10px;">
+                        {% if item.product.image %}
+                            <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" style="width: 50px; height: 50px; object-fit: cover;">
+                        {% endif %}
+                        <div class="item-details">
+                            <p style="margin: 0; font-weight: bold;">{{ item.product.name }}</p>
+                            <span style="font-size: 13px;">{{ item.quantity }} шт. × {{ item.product.price }} грн</span>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                <div class="summary-total" style="margin-top: 20px; border-top: 1px solid #eee; padding-top: 10px;">
+                    <div class="total-row" style="display: flex; justify-content: space-between;"><span>Всього:</span> <span>{{ total_price }} грн</span></div>
+                    <div class="total-row highlight" style="display: flex; justify-content: space-between; font-weight: bold; color: #b71c1c;"><span>До сплати:</span> <span>{{ total_price }} грн</span></div>
+                </div>
+            </aside>
+        </div>
+    </form>
+</div>
+
+<script>
+// ВАЛІДАЦІЯ (Перевіряє тільки видимі поля, ігнорує квартиру)
+function validateStep(step) {
+    const currentStep = document.getElementById('step-' + step);
+    const inputs = currentStep.querySelectorAll('input, select');
+    let isValid = true;
+
+    inputs.forEach(input => {
+        // Перевірка видимості поля (якщо блок прихований, ігноруємо)
+        const isVisible = !!(input.offsetWidth || input.offsetHeight || input.getClientRects().length);
+        const isOptional = input.placeholder && input.placeholder.includes('(кв.)');
+
+        if (isVisible && !isOptional) {
+            if (!input.value.trim()) {
+                input.style.borderBottom = "2px solid #ff5252";
+                isValid = false;
+            } else {
+                input.style.borderBottom = "1px solid #ddd";
+            }
+        }
+    });
+
+    if (!isValid) {
+        alert("Будь ласка, заповніть усі обов'язкові поля доставки!");
+    }
+    return isValid;
+}
+
+function goToStep(nextStep) {
+    if (nextStep === 2 && !validateStep(1)) return;
+
+    document.querySelectorAll('.checkout-step').forEach(s => s.style.display = 'none');
+    const target = document.getElementById('step-' + nextStep);
+    if (target) {
+        target.style.display = 'block';
+        target.classList.add('active');
+    }
+}
+
+function toggleDeliveryFields() {
+    const method = document.getElementById('delivery-select').value;
+    const nova = document.getElementById('nova-poshta-fields');
+    const ukr = document.getElementById('ukr-poshta-fields');
+
+    nova.style.display = (method === 'nova') ? 'block' : 'none';
+    ukr.style.display = (method === 'ukr') ? 'block' : 'none';
+}
+
+// ПРИВ'ЯЗУЄМО ВАЛІДАЦІЮ ДО ВІДПРАВКИ ФОРМИ
+document.getElementById('checkout-form').addEventListener('submit', function(event) {
+    if (!validateStep(2)) {
+        event.preventDefault(); // ЗУПИНЯЄМО відправку форми
+    }
+});
+
+document.addEventListener('DOMContentLoaded', toggleDeliveryFields);
+</script>
+{% endblock %}

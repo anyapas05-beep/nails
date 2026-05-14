@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="cart-wrapper">
+    <h2 class="cart-title">Ваш кошик</h2>
+
+    {% if cart_items %}
+        <!-- Таблиця товарів у кошику -->
+        <div class="cart-table-container">
+            <table class="cart-table">
+                <thead>
+                    <tr>
+                        <th>Товар</th>
+                        <th>Ціна</th>
+                        <th style="text-align: center;">Кількість</th>
+                        <th>Сума</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in cart_items %}
+                    <tr>
+                        <td>
+                            <div class="cart-item-info">
+                                {% if item.product.image %}
+                                    <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" class="cart-item-img">
+                                {% endif %}
+                                <span class="cart-item-name">{{ item.product.name }}</span>
+                            </div>
+                        </td>
+                        <td>
+                            <span class="cart-item-price">{{ item.product.price }} грн</span>
+                        </td>
+                        <td style="text-align: center;">
+                            <span class="cart-quantity-badge">
+                                {{ item.quantity }} шт.
+                            </span>
+                        </td>
+                        <td>
+                            <span class="cart-item-total">{{ item.item_total }} грн</span>
+                        </td>
+                        <td style="text-align: right;">
+                            <!-- Посилання на видалення товару -->
+                            <a href="{% url 'cart_remove' item.product.id %}" class="btn-remove" title="Видалити">
+                                &times;
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Підсумок кошика -->
+        <div class="cart-summary">
+            <div class="summary-left">
+                <a href="{% url 'catalog' %}" class="continue-shopping">
+                    &larr; Продовжити покупки
+                </a>
+            </div>
+            <div class="summary-right" style="text-align: right;">
+    <div class="cart-total-label">Загальна сума:</div>
+    <div class="cart-total-amount" style="color: #b71c1c; font-size: 32px; font-weight: bold;">{{ total_price }} грн</div>
+    
+    <!-- Ось виправлена кнопка-посилання -->
+    <a href="{% url 'checkout' %}" class="btn-pastel btn-fixed" style="margin-top: 20px; text-decoration: none; display: inline-block; line-height: 40px; text-align: center; background-color: #f06292; color: white;">
+        ОФОРМИТИ ЗАМОВЛЕННЯ
+    </a>
+</div>
+        </div>
+
+    {% else %}
+        <!-- Повідомлення про порожній кошик -->
+        <div class="cart-empty">
+            <div class="cart-empty-icon">🛒</div>
+            <h3>Ваш кошик порожній</h3>
+            <p>Схоже, ви ще нічого не обрали для замовлення.</p>
+            <div style="display: flex; justify-content: center; margin-top: 30px;">
+                <a href="{% url 'catalog' %}" class="btn-pastel btn-fixed">ПЕРЕЙТИ ДО КАТАЛОГУ</a>
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -119,7 +119,16 @@ USE_TZ = True
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
-STATIC_URL = '/static/'
+STATIC_URL = 'static/'
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, "static"),
+    BASE_DIR / "static", # Або вкажіть шлях до папки static вашого додатка
 ]
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 465
+EMAIL_USE_TLS = False
+EMAIL_USE_SSL = True  # Вмикаємо SSL
+EMAIL_HOST_USER = 'ani4ka.pas@gmail.com'
+# Це має бути 16-значний код "Пароля додатка", а не пароль від пошти!
+EMAIL_HOST_PASSWORD = 'oyxy vcet spwn avpf'
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
